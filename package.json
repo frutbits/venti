@@ -1,14 +1,20 @@
 {
-  "name": "template",
+  "name": "venti",
   "version": "1.0.0",
   "description": "A repository for Zhycorp's project base",
-  "main": "dist/index.js",
+  "main": "dist/main.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run lint && npm run compile",
+    "compile": "tsc --build tsconfig.json",
+    "lint": "eslint . --ignore-path .gitignore --ext .ts",
+    "lint:fix": "eslint . --ignore-path .gitignore --ext .ts --fix",
+    "start": "node --experimental-specifier-resolution=node dist/main",
+    "start:dev": "rimraf ./dist && npm run compile && npm start"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zhycorp/template.git"
+    "url": "git+https://github.com/zhycorp/venti.git"
   },
   "keywords": [
     "js",
@@ -17,7 +23,7 @@
   "author": "Zhycorp <contact@zhycorp.net>",
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/zhycorp/template/issues"
+    "url": "https://github.com/zhycorp/venti/issues"
   },
   "homepage": "https://zhycorp.net/",
   "engines": {
@@ -34,7 +40,16 @@
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
     "eslint": "^8.13.0",
+    "rimraf": "^3.0.2",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "@sapphire/decorators": "^4.3.4",
+    "@sapphire/framework": "^3.0.0-next.379f5db.0",
+    "@sapphire/plugin-logger": "^2.2.1",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0",
+    "shoukaku": "^2.1.6"
   }
 }
