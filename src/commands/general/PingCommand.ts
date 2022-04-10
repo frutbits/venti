@@ -1,6 +1,7 @@
 import { ApplyOptions } from "@sapphire/decorators";
 import { ApplicationCommandRegistry, Command, RegisterBehavior } from "@sapphire/framework";
-import { ColorResolvable, CommandInteraction, Message, MessageEmbed, User } from "discord.js";
+import { ColorResolvable, CommandInteraction, Message, MessageEmbed } from "discord.js";
+import { CommandContext } from "../../structures/CommandContext";
 
 @ApplyOptions<Command.Options>({
     aliases: [],
@@ -20,37 +21,39 @@ export class PingCommand extends Command {
     }
 
     public messageRun(message: Message): any {
-        message.channel.send("🏓 Pong!").then(msg => {
-            msg.edit({
-                content: " ",
-                embeds: [this.generateResponse(msg.createdTimestamp - message.createdTimestamp, message.author)]
-            }).catch(e => this.container.logger.error(e));
+        return this.run(new CommandContext(message));
+    }
+
+    public chatInputRun(interaction: CommandInteraction<"cached">): any {
+        return this.run(new CommandContext(interaction));
+    }
+
+    public run(ctx: CommandContext): any {
+        ctx.send({ content: "🏓 Pong!" }, true).then(msg => {
+            const wsLatency = this.container.client.ws.ping.toFixed(0);
+            if (msg) {
+                const latency = msg.createdTimestamp - ctx.context.createdTimestamp;
+                msg.edit({
+                    content: " ",
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor({ name: "🏓 PONG!", iconURL: this.container.client.user!.displayAvatarURL() })
+                            .setColor(PingCommand.searchHex(wsLatency))
+                            .addFields({
+                                name: "📶 API Latency",
+                                value: `**\`${latency}\`** ms`,
+                                inline: true
+                            }, {
+                                name: "🌐 WebSocket Latency",
+                                value: `**\`${wsLatency}\`** ms`,
+                                inline: true
+                            })
+                            .setFooter({ text: `Requested by: ${ctx.author.tag}`, iconURL: ctx.author.displayAvatarURL({ dynamic: true }) })
+                            .setTimestamp()
+                    ]
+                }).catch(e => this.container.logger.error(e));
+            }
         }).catch(e => this.container.logger.error(e));
-    }
-
-    public async chatInputRun(interaction: CommandInteraction<"cached">): Promise<any> {
-        const msg = await interaction.reply({ content: "🏓 Pong!", fetchReply: true });
-        return interaction.editReply({
-            embeds: [this.generateResponse(msg.createdTimestamp - interaction.createdTimestamp, interaction.user)]
-        });
-    }
-
-    private generateResponse(latency: number, author: User): MessageEmbed {
-        const wsLatency = this.container.client.ws.ping.toFixed(0);
-        return new MessageEmbed()
-            .setAuthor({ name: "🏓 PONG!", iconURL: this.container.client.user!.displayAvatarURL() })
-            .setColor(PingCommand.searchHex(wsLatency))
-            .addFields({
-                name: "📶 API Latency",
-                value: `**\`${latency}\`** ms`,
-                inline: true
-            }, {
-                name: "🌐 WebSocket Latency",
-                value: `**\`${wsLatency}\`** ms`,
-                inline: true
-            })
-            .setFooter({ text: `Requested by: ${author.tag}`, iconURL: author.displayAvatarURL({ dynamic: true }) })
-            .setTimestamp();
     }
 
     private static searchHex(ms: number | string): ColorResolvable {
