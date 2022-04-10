@@ -2,7 +2,7 @@ import { Collection } from "discord.js";
 import shoukaku, { LavalinkSource } from "shoukaku";
 import { lavalink } from "../config";
 import { DispatcherOptions } from "../typings";
-import { Util } from "../util/Util";
+import { Util } from "../utils/Util";
 import { Dispatcher } from "./Dispatcher";
 import { Venti } from "./Venti";
 
