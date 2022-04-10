@@ -19,7 +19,7 @@ export class memberInSameVoice extends Precondition {
         const dispatcher = this.container.client.shoukaku.queue.get(ctx.context.guildId!);
         const voiceChannel = ctx.context.member!.voice.channel;
         if (dispatcher) {
-            if (dispatcher.listeners.length && voiceChannel?.joinable) {
+            if (!dispatcher.listeners.length && voiceChannel?.joinable) {
                 dispatcher.destroy();
                 return this.ok();
             }
