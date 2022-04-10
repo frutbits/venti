@@ -1,8 +1,8 @@
 import { NodeOptions } from "shoukaku";
 
-export const devs: string[] = JSON.parse(process.env.DEVS ?? "[]");
-export const devGuilds = JSON.parse(process.env.DEV_GUILDS ?? "[]");
-export const prefix = ",";
+export const devs: string[] = JSON.parse(process.env.CONFIG_DEVS ?? "[]");
+export const devGuilds = JSON.parse(process.env.CONFIG_DEV_GUILDS ?? "[]");
+export const prefix = process.env.CONFIG_PREFIX!;
 export const lavalink = {
     servers: JSON.parse(process.env.LAVALINK_NODES ?? "[]") as NodeOptions[],
     options: {
@@ -14,3 +14,5 @@ export const lavalink = {
         resumableTimeout: 30
     }
 };
+
+if (typeof process.env.CONFIG_PREFIX !== "string") throw new Error("CONFIG_PREFIX must be a string");
