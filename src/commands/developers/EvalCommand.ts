@@ -3,6 +3,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { Message, MessageEmbed } from "discord.js";
 import util from "util";
 import { codeBlock } from "@discordjs/builders";
+import { reply } from "@sapphire/plugin-editable-commands";
 
 @ApplyOptions<CommandOptions>({
     aliases: [],
@@ -16,7 +17,7 @@ export class EvalCommand extends Command {
     public async messageRun(message: Message, args: Args): Promise<any> {
         const msg = message;
         const userArgument = await args.restResult("string");
-        if (!userArgument.success) return message.reply({ embeds: [new MessageEmbed().setDescription("❌ | You need to input code")] });
+        if (!userArgument.success) return reply(message, { embeds: [new MessageEmbed().setDescription("❌ | You need to input code")] });
         const code = userArgument.value
             .replace(/`/g, `\`${String.fromCharCode(8203)}`)
             .replace(/@/g, `@${String.fromCharCode(8203)}`)
@@ -25,11 +26,11 @@ export class EvalCommand extends Command {
             // eslint-disable-next-line no-eval
             let { evaled } = await EvalCommand.parseEval(eval(code));
             if (typeof evaled !== "string") evaled = util.inspect(evaled, { depth: 0 });
-            await msg.channel.send({
+            await reply(msg, {
                 content: codeBlock("js", evaled)
             });
         } catch (e: any) {
-            await msg.channel.send({
+            await reply(msg, {
                 content: codeBlock("js", (e as Error).message)
             });
         }
