@@ -1,5 +1,6 @@
 import { BucketScope } from "@sapphire/framework";
 import "dotenv/config";
+import "@sapphire/plugin-editable-commands/register";
 import process from "node:process";
 import { devs, prefix } from "./config.js";
 import { Venti } from "./structures/Venti.js";
