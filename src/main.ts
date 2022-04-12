@@ -1,4 +1,5 @@
 import "dotenv/config";
+import "@sapphire/plugin-editable-commands/register";
 import process from "node:process";
 import { prefix } from "./config.js";
 import { Venti } from "./structures/Venti.js";
