@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-base-to-string */
 import { ApplyOptions } from "@sapphire/decorators";
 import { ApplicationCommandRegistry, Args, Command, RegisterBehavior } from "@sapphire/framework";
 import { CommandInteraction, Message, TextChannel, VoiceChannel } from "discord.js";
@@ -5,6 +6,7 @@ import { ApplicationCommandOptionTypes } from "discord.js/typings/enums";
 import { devGuilds } from "../../config";
 import { CommandContext } from "../../structures/CommandContext";
 import { ShoukakuHandler } from "../../structures/ShoukakuHandler";
+import { EmbedPlayer } from "../../utils/EmbedPlayer";
 import { Util } from "../../utils/Util";
 
 @ApplyOptions<Command.Options>({
@@ -35,7 +37,6 @@ export class PlayCommand extends Command {
     }
 
     public async chatInputRun(interaction: CommandInteraction<"cached">): Promise<any> {
-        await interaction.deferReply();
         return this.run(new CommandContext(interaction));
     }
 
@@ -44,6 +45,20 @@ export class PlayCommand extends Command {
     }
 
     public async run(ctx: CommandContext): Promise<any> {
+        const data = await this.container.client.databases.guild.fetchGuildRequester(ctx.context.guildId!);
+        let requester: Awaited<ReturnType<typeof EmbedPlayer["resolveRequesterChannel"]>> | undefined;
+        if (data.channel && data.message) {
+            requester = await EmbedPlayer.resolveRequesterChannel(ctx.context.guild!, data);
+            if (requester.channel?.id !== ctx.context.channelId) {
+                return ctx.send({
+                    embeds: [
+                        Util.createEmbed("error", `This command is restricted to ${requester.channel!.toString()}`)
+                    ]
+                });
+            }
+            ctx.isInsideRequesterChannel = true;
+        }
+        if (ctx.context instanceof CommandInteraction) await ctx.context.deferReply({ ephemeral: requester?.channel?.id === ctx.context.channel?.id });
         const argsQuery = await ctx.args?.restResult("string");
         if (!argsQuery?.success && !ctx.options) {
             return ctx.send({
@@ -80,10 +95,13 @@ export class PlayCommand extends Command {
             }
         ]);
         if (!dispatcher.player?.track) {
-            dispatcher.player?.playTrack(dispatcher.queue[0]);
+            dispatcher.player?.playTrack(dispatcher.queue[0].base64);
         }
-        return ctx.send({
-            content: `Added \`${result.tracks[0].info.title!}\` to the queue`
-        });
+        await dispatcher.embedPlayer?.update();
+        if (!requester && !(ctx.context instanceof CommandContext)) {
+            return ctx.send({
+                content: `Added \`${result.tracks[0].info.title!}\` to the queue`
+            });
+        }
     }
 }
