@@ -8,6 +8,7 @@ export class CommandContext {
     public author = this.context instanceof CommandInteraction ? this.context.user : this.context.author;
     public channel = this.context.channel;
     public options = this.context instanceof CommandInteraction ? this.context.options : undefined;
+    public isInsideRequesterChannel = false;
     public constructor(public readonly context: CommandInteraction<"cached"> | Message, public args?: Args) {}
 
     public async send(options: InteractionReplyOptions | MessageOptions | MessagePayload, fetchReply?: true): Promise<Message | null>;
@@ -29,6 +30,12 @@ export class CommandContext {
 
         if ((options as MessageOptions).embeds && !(this.context.channel as GuildChannel).permissionsFor(this.context.guild!.me!).has(["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"])) return null;
 
-        return this.context.channel.send(options);
+        const msg = await this.context.channel.send(options);
+        if (this.isInsideRequesterChannel) {
+            setTimeout(async () => {
+                if (msg.deletable) await msg.delete();
+            }, 5000);
+        }
+        return msg;
     }
 }
