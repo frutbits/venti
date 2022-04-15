@@ -1,16 +1,50 @@
-import { VoiceState } from "discord.js";
+import { Snowflake, VoiceState } from "discord.js";
 import { ShoukakuPlayer, ShoukakuTrack } from "shoukaku";
 import { DispatcherOptions } from "../typings";
+import { EmbedPlayer } from "../utils/EmbedPlayer";
 import { Track } from "./Track";
 import { Venti } from "./Venti";
+
+const nonEnum = { enumerable: false };
+
+export enum LoopType {
+    NONE = 0,
+    ALL = 1,
+    ONE = 2
+}
+
+export class Queue extends Array<Track> {
+    public previousTrack!: Track;
+    public get currentTrack(): Track | undefined {
+        return this[0];
+    }
+
+    public get queueSize(): number {
+        return Math.max(0, this.length - 1);
+    }
+
+    public get queued(): Track[] {
+        return this.filter((x, i) => i !== 0);
+    }
+}
 
 export class Dispatcher {
     public readonly guild = this.options.guild;
     public readonly textChannel = this.options.textChannel;
     public readonly voiceChannel = this.options.voiceChannel;
-    public readonly queue: Track[] = [];
+    public readonly queue = new Queue();
+    public loopState: LoopType = LoopType.NONE;
     public player!: ShoukakuPlayer | null;
-    public constructor(public readonly client: Venti, public readonly options: DispatcherOptions) {}
+    public embedPlayer: EmbedPlayer | undefined;
+    private _lastMusicMessageID: Snowflake | null = null;
+    private _lastVoiceStateUpdateMessageID: Snowflake | null = null;
+
+    public constructor(public readonly client: Venti, public readonly options: DispatcherOptions) {
+        Object.defineProperties(this, {
+            _lastMusicMessageID: nonEnum,
+            _lastVoiceStateUpdateMessageID: nonEnum
+        });
+    }
 
     public async connect(): Promise<{ success: boolean; error?: string }> {
         if (this.player) return { success: true };
@@ -21,6 +55,8 @@ export class Dispatcher {
             deaf: true
         }).catch((e: Error) => ({ error: e.message }));
         if ("error" in response) return { success: false, error: response.error };
+        this.embedPlayer = new EmbedPlayer(this);
+        await this.embedPlayer.fetch();
         this.player = response;
         return { success: true };
     }
@@ -32,8 +68,7 @@ export class Dispatcher {
                 added.push(false);
                 continue;
             }
-            Object.assign(track, { requester });
-            this.queue.push(track as Track);
+            this.queue.push(new Track(track, requester));
             added.push(true);
         }
         return added;
@@ -50,5 +85,31 @@ export class Dispatcher {
             return Array.from(states.values());
         }
         return [];
+    }
+
+    public get oldMusicMessage(): Snowflake | null {
+        return this._lastMusicMessageID;
+    }
+
+    public set oldMusicMessage(id: Snowflake | null) {
+        if (this._lastMusicMessageID !== null) {
+            this.textChannel.messages.fetch(this._lastMusicMessageID)
+                .then(m => m.delete())
+                .catch(e => this.client.logger.error(e));
+        }
+        this._lastMusicMessageID = id;
+    }
+
+    public get oldVoiceStateUpdateMessage(): Snowflake | null {
+        return this._lastVoiceStateUpdateMessageID;
+    }
+
+    public set oldVoiceStateUpdateMessage(id: Snowflake | null) {
+        if (this._lastVoiceStateUpdateMessageID !== null) {
+            this.textChannel.messages.fetch(this._lastVoiceStateUpdateMessageID)
+                .then(m => m.delete())
+                .catch(e => this.client.logger.error(e));
+        }
+        this._lastVoiceStateUpdateMessageID = id;
     }
 }
