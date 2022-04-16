@@ -93,6 +93,8 @@ export class Dispatcher {
 
     public destroy(): void {
         if (this.player) this.player.connection.disconnect();
+        this.oldMusicMessage = null;
+        this.oldVoiceStateUpdateMessage = null;
         this.client.shoukaku.queue.delete(this.guild.id);
     }
 
