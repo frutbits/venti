@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "type": "module",
   "scripts": {
-    "build": "npm run lint && npm run compile",
+    "build": "npx run prisma generate && npm run lint && npm run compile",
     "compile": "tsc --build tsconfig.json",
     "lint": "eslint . --ignore-path .gitignore --ext .ts",
     "lint:fix": "eslint . --ignore-path .gitignore --ext .ts --fix",
