@@ -26,13 +26,15 @@ export class ShoukakuHandler extends Shoukaku {
         return "youtube";
     }
 
-    public static restResolve(node: ShoukakuSocket, identifier: string, search?: LavalinkSource): Promise<ShoukakuTrackList | { error: string }> {
+    public static async restResolve(node: ShoukakuSocket, identifier: string, search?: LavalinkSource): Promise<ShoukakuTrackList | { error: string }> {
+        let result;
         try {
-            return node.rest.resolve(identifier, search);
+            result = await node.rest.resolve(identifier, search);
         } catch (error) {
-            return Promise.resolve({
+            result = Promise.resolve({
                 error: (error as Error).message
             });
         }
+        return result;
     }
 }
