@@ -1,12 +1,13 @@
 import { Collection } from "discord.js";
-import shoukaku, { LavalinkSource, ShoukakuSocket, ShoukakuTrackList } from "shoukaku";
-import { lavalink } from "../config";
+import shoukaku, { LavalinkSource, ShoukakuSocket } from "shoukaku";
+import { lavalink, lavalinkRest } from "../config";
 import { DispatcherOptions } from "../typings";
 import { Util } from "../utils/Util";
 import { Dispatcher } from "./Dispatcher";
 import { Venti } from "./Venti";
+import got from "got";
 
-const { Shoukaku, Libraries } = shoukaku;
+const { Shoukaku, Libraries, ShoukakuTrackList } = shoukaku;
 
 export class ShoukakuHandler extends Shoukaku {
     public readonly queue: Collection<string, Dispatcher> = new Collection();
@@ -26,10 +27,23 @@ export class ShoukakuHandler extends Shoukaku {
         return "youtube";
     }
 
-    public static async restResolve(node: ShoukakuSocket, identifier: string, search?: LavalinkSource): Promise<ShoukakuTrackList | { error: string }> {
+    public static async restResolve(node: ShoukakuSocket, identifier: string, search?: LavalinkSource): Promise<shoukaku.ShoukakuTrackList | { error: string }> {
         let result;
         try {
-            result = await node.rest.resolve(identifier, search);
+            const searchTypes: Record<LavalinkSource, string> = { soundcloud: "scsearch", youtube: "ytsearch", youtubemusic: "ytmsearch" };
+            const url = new URL(lavalinkRest.host ?? node.rest.url);
+            url.pathname = "/loadtracks";
+            const response = await got.get(url.toString(), {
+                searchParams: {
+                    identifier: `${`${searchTypes[search!]}:` || ""}${identifier}`
+                },
+                headers: {
+                    // @ts-expect-error ShoukakuRest#auth is private
+                    Authorization: lavalinkRest.auth ?? node.rest.auth
+                }
+            }).json<object>().catch((e: Error) => ({ message: e.message }));
+            if ("error" in response) result = response;
+            else result = new ShoukakuTrackList(response);
         } catch (error) {
             result = Promise.resolve({
                 error: (error as Error).message
