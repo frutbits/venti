@@ -28,5 +28,6 @@ declare module "@sapphire/framework" {
         memberInSameVoice: never;
         isNodeAvailable: never;
         isInsideRequester: never;
+        isPlayerExists: never;
     }
 }
