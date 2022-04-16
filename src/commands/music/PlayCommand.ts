@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-base-to-string */
 import { ApplyOptions } from "@sapphire/decorators";
 import { ApplicationCommandRegistry, Args, Command, RegisterBehavior } from "@sapphire/framework";
-import { CommandInteraction, Message, TextChannel, VoiceChannel } from "discord.js";
+import { CommandInteraction, Message, TextChannel, VoiceChannel, Util as DiscordJSUtil } from "discord.js";
 import { ApplicationCommandOptionTypes } from "discord.js/typings/enums";
 import { devGuilds } from "../../config";
 import { CommandContext } from "../../structures/CommandContext";
@@ -71,7 +71,9 @@ export class PlayCommand extends Command {
         const result = await this.container.client.shoukaku.getNode().rest.resolve(query!, ShoukakuHandler.getProvider(query!));
         if (result.type === "NO_MATCHES" || !result.tracks.length) {
             return ctx.send({
-                content: "Couldn't obtain any result matching the query"
+                embeds: [
+                    Util.createEmbed("error", "Couldn't obtain any result matching the query", true)
+                ]
             });
         }
         const dispatcher = this.container.client.shoukaku.getDispatcher({
@@ -84,23 +86,32 @@ export class PlayCommand extends Command {
             const response = await dispatcher.connect();
             if (response.error) {
                 return ctx.send({
-                    content: `Failed when trying to join your channel: \`${response.error}\``
+                    embeds: [
+                        Util.createEmbed("error", `Failed when trying to join your channel: \`${response.error}\``, true)
+                    ]
                 });
             }
         }
-        dispatcher.addTracks([
-            {
-                track: result.tracks[0],
-                requester: ctx.author.id
-            }
-        ]);
+        const toAdd = result.tracks.map(x => ({
+            track: x,
+            requester: ctx.author.id
+        }));
+        dispatcher.addTracks(
+            result.type === "PLAYLIST" ? toAdd : [toAdd[0]]
+        );
         if (!dispatcher.player?.track) {
             dispatcher.player?.playTrack(dispatcher.queue[0].base64);
         }
         await dispatcher.embedPlayer?.update();
-        if (!requester && !(ctx.context instanceof CommandContext)) {
+        if (!requester && !ctx.isCommandInteraction()) {
             return ctx.send({
-                content: `Added \`${result.tracks[0].info.title!}\` to the queue`
+                embeds: [
+                    Util.createEmbed(
+                        "success",
+                        `Added ${result.type === "PLAYLIST" ? `**${result.playlistName ?? "Unknown Playlist"}** (${result.tracks.length} tracks)` : `\`${DiscordJSUtil.escapeMarkdown(toAdd[0].track.info.title!)}\``} to the queue`,
+                        true
+                    )
+                ]
             });
         }
     }
