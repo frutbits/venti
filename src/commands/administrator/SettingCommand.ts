@@ -2,7 +2,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { ApplicationCommandRegistry, Args, Command, RegisterBehavior } from "@sapphire/framework";
 import { ApplicationCommandOptionData, CommandInteraction, Message, MessageActionRow, MessageButton } from "discord.js";
 import { ApplicationCommandOptionTypes } from "discord.js/typings/enums";
-import { devGuilds, prefix } from "../../config";
+import { devGuilds, isDev, prefix } from "../../config";
 import { CommandContext } from "../../structures/CommandContext";
 import { EmbedPlayer } from "../../utils/EmbedPlayer";
 import { Util } from "../../utils/Util";
@@ -12,9 +12,7 @@ import { Util } from "../../utils/Util";
     name: "set",
     description: "Customize bot's settings",
     chatInputCommand: {
-        register: true,
-        guildIds: devGuilds,
-        behaviorWhenNotIdentical: RegisterBehavior.Overwrite
+        register: true
     },
     requiredUserPermissions: ["MANAGE_GUILD"]
 })
@@ -32,6 +30,11 @@ export class SettingCommand extends Command {
                     required: true
                 }
             ]
+        },
+        {
+            name: "removerequester",
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
+            description: "Remove text channel requester"
         }
     ];
 
@@ -40,6 +43,10 @@ export class SettingCommand extends Command {
             name: this.name,
             description: this.description,
             options: this.commands
+        }, {
+            registerCommandIfMissing: true,
+            behaviorWhenNotIdentical: RegisterBehavior.Overwrite,
+            guildIds: isDev ? devGuilds : []
         });
     }
 
@@ -141,6 +148,29 @@ export class SettingCommand extends Command {
                 });
                 await ctx.send({
                     embeds: [Util.createEmbed("info", `Set requester channel to: <#${data.requester_channel!}>`)]
+                });
+                break;
+            }
+            case "removerequester": {
+                const oldRequester = await EmbedPlayer.resolveRequesterChannel(
+                    ctx.context.guild!,
+                    await this.container.client.databases.guild.fetchGuildRequester(ctx.context.guildId!)
+                );
+                if (!oldRequester.channel) {
+                    return ctx.send({
+                        embeds: [Util.createEmbed("error", "There's no requester channel in this server")]
+                    });
+                }
+                if (oldRequester.message?.deletable) await oldRequester.message.delete();
+                await this.container.client.prisma.guilds.update({
+                    where: { id: ctx.context.guildId! },
+                    data: {
+                        requester_channel: null,
+                        requester_message: null
+                    }
+                });
+                await ctx.send({
+                    embeds: [Util.createEmbed("info", "Deleted requester channel")]
                 });
                 break;
             }
