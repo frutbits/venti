@@ -9,7 +9,7 @@ import { Util } from "../../utils/Util";
     aliases: [],
     name: "stop",
     description: "Stop and delete current queue",
-    preconditions: ["isPlayerExists", "memberInVoice", "memberVoiceJoinable", "memberInSameVoice"],
+    preconditions: ["isPlayerPlaying", "memberInVoice", "memberVoiceJoinable", "memberInSameVoice"],
     chatInputCommand: {
         register: true
     },
