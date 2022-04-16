@@ -97,6 +97,8 @@ export class Dispatcher {
         if (this.player) this.player.connection.disconnect();
         this.oldMusicMessage = null;
         this.oldVoiceStateUpdateMessage = null;
+        Object.assign(this, { queue: [] });
+        void this.embedPlayer?.update();
         this.client.shoukaku.queue.delete(this.guild.id);
     }
 
