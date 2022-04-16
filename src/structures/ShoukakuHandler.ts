@@ -30,12 +30,12 @@ export class ShoukakuHandler extends Shoukaku {
     public static async restResolve(node: ShoukakuSocket, identifier: string, search?: LavalinkSource): Promise<shoukaku.ShoukakuTrackList | { error: string }> {
         let result;
         try {
-            const searchTypes: Record<LavalinkSource, string> = { soundcloud: "scsearch", youtube: "ytsearch", youtubemusic: "ytmsearch" };
+            const searchTypes: Record<LavalinkSource, string> = { soundcloud: "scsearch:", youtube: "ytsearch:", youtubemusic: "ytmsearch:" };
             const url = new URL(lavalinkRest.host ?? node.rest.url);
             url.pathname = "/loadtracks";
             const response = await got.get(url.toString(), {
                 searchParams: {
-                    identifier: `${`${searchTypes[search!]}:` || ""}${identifier}`
+                    identifier: `${searchTypes[search!] || ""}${identifier}`
                 },
                 headers: {
                     // @ts-expect-error ShoukakuRest#auth is private
