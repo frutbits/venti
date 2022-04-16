@@ -6,7 +6,7 @@ import { prefix } from "../../config";
 @ApplyOptions<Listener.Options>({
     event: "messageCreate"
 })
-export class MessageListener extends Listener {
+export class MessageCreateListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {
         super(context, options);
     }
