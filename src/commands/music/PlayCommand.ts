@@ -19,7 +19,8 @@ import { Util } from "../../utils/Util";
         register: true,
         guildIds: devGuilds,
         behaviorWhenNotIdentical: RegisterBehavior.Overwrite
-    }
+    },
+    requiredClientPermissions: ["EMBED_LINKS"]
 })
 export class PlayCommand extends Command {
     public override registerApplicationCommands(registry: ApplicationCommandRegistry): void {
