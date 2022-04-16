@@ -38,6 +38,7 @@ export class Dispatcher {
     public player!: ShoukakuPlayer | null;
     public embedPlayer: EmbedPlayer | undefined;
     private _lastMusicMessageID: Snowflake | null = null;
+    private _lastExceptionMessageID: Snowflake | null = null;
     private _lastVoiceStateUpdateMessageID: Snowflake | null = null;
 
     public constructor(public readonly client: Venti, public readonly options: DispatcherOptions) {
@@ -131,5 +132,18 @@ export class Dispatcher {
                 .catch(e => this.client.logger.error(e));
         }
         this._lastVoiceStateUpdateMessageID = id;
+    }
+
+    public get oldExceptionMessage(): Snowflake | null {
+        return this._lastExceptionMessageID;
+    }
+
+    public set oldExceptionMessage(id: Snowflake | null) {
+        if (this._lastExceptionMessageID !== null) {
+            this.textChannel.messages.fetch(this._lastExceptionMessageID)
+                .then(m => m.delete())
+                .catch(e => this.client.logger.error(e));
+        }
+        this._lastExceptionMessageID = id;
     }
 }
