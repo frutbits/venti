@@ -26,9 +26,11 @@ export class MessageListener extends Listener {
         if (data) {
             const requesterMessage = await message.channel.messages.fetch(data.requester_message!).catch(() => null);
             if (requesterMessage) {
-                if (message.author.bot && message.author.id !== this.container.client.user?.id && message.deletable) await message.delete().catch(() => null);
+                if (
+                    ((message.author.bot && message.author.id !== this.container.client.user?.id) || !message.author.bot) &&
+                    message.deletable
+                ) await message.delete().catch(() => null);
                 if ((!message.content.startsWith(data.prefix ?? prefix) && !message.content.startsWith(prefix)) && !message.author.bot) {
-                    if (message.deletable) await message.delete();
                     const command = this.container.stores.get("commands").get("play") as MessageCommand;
                     const preconditionsResult = await command.preconditions.messageRun(message, command, { message, command });
                     const context: MessageCommandContext = {
