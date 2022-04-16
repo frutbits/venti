@@ -127,11 +127,11 @@ export class PlayCommand extends Command {
         };
 
         if (added.success.length) {
-            if (ctx.isCommandInteraction()) await sendTrackAdded();
-            if (!ctx.isCommandInteraction() && requester?.channel?.id !== ctx.context.channelId) {
+            if (ctx.isCommand()) await sendTrackAdded();
+            if (!ctx.isCommand() && requester?.channel?.id !== ctx.context.channelId) {
                 await sendTrackAdded();
             }
-            if (!ctx.isCommandInteraction() && requester?.channel?.id === ctx.context.channelId && result.type === "PLAYLIST") {
+            if (!ctx.isCommand() && requester?.channel?.id === ctx.context.channelId && result.type === "PLAYLIST") {
                 await sendTrackAdded();
             }
         }
