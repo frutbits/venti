@@ -20,7 +20,7 @@ export class ShoukakuPlayerTrackStartListener extends Listener {
         if (!dispatcher.embedPlayer?.message) {
             dispatcher.oldMusicMessage = await dispatcher.textChannel.send({
                 embeds: [
-                    Util.createEmbed("info", `Started playing: \`${dispatcher.queue[0].info.title!}\``)
+                    Util.createEmbed("info", `Started playing: \`${dispatcher.queue[0].displayTitle}\``)
                 ]
             }).then(x => x.id);
         }

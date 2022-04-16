@@ -36,19 +36,21 @@ export class EmbedPlayer {
         if (!this.textChannel || !this.message) return;
         if (this.message.editable && this.dispatcher.player) {
             if (this.dispatcher.queue.length) {
-                const list = Util.chunk(this.dispatcher.queue.queued.map((x, i) => `${++i}. ${x.info.author!} - ${x.info.title!} [${x.info.isStream ? "LIVE" : Util.readableTime(x.info.length!)}] ~ <@${x.requester}>`), 10);
+                const list = Util.chunk(this.dispatcher.queue.queued.map((x, i) => `${++i}. ${x.info.author!} - ${x.displayTitle} [${x.info.isStream ? "LIVE" : Util.readableTime(x.info.length!)}] ~ <@${x.requester}>`), 10);
                 const currentSong = this.dispatcher.queue[0];
-                const image = await get(currentSong.displayThumbnail).then(() => currentSong.displayThumbnail).catch(() => Images.DEFAULT_BANNER);
+                const image = currentSong.displayThumbnail
+                    ? await get(currentSong.displayThumbnail).then(() => currentSong.displayThumbnail).catch(() => Images.DEFAULT_BANNER)
+                    : Images.DEFAULT_BANNER;
                 const embed = Util.createEmbed("info")
-                    .setTitle(`**${currentSong.info.title!}**`)
+                    .setTitle(`${`**${currentSong.info.title!}`.substring(0, 254)}**`)
                     .setURL(currentSong.info.uri!)
                     .setDescription(`Requested by: <@${currentSong.requester}>`)
                     .setImage(image)
-                    .setFooter({ text: `${list.length} songs in queue | Volume: ${this.dispatcher.player.filters.volume * 100}% ${this.dispatcher.loopState === LoopType.NONE ? "" : `| Loop: ${loopModes[this.dispatcher.loopState]}`} ${this.dispatcher.player.paused ? "| Song paused" : ""}` });
+                    .setFooter({ text: `${this.dispatcher.queue.queueSize} songs in queue | Volume: ${this.dispatcher.player.filters.volume * 100}% ${this.dispatcher.loopState === LoopType.NONE ? "" : `| Loop: ${loopModes[this.dispatcher.loopState]}`} ${this.dispatcher.player.paused ? "| Song paused" : ""}` });
                 await this.message.edit({
                     allowedMentions: { parse: [] },
                     embeds: [embed],
-                    content: `**__Queue list:__**${list.length > 1 ? `\n\nAnd **${this.dispatcher.queue.length - list[0].length}** more...` : ""}\n${list.length ? list[0].reverse().join("\n") : "Join a voice channel and queue songs by name or url in here."}`
+                    content: `**__Queue list:__**${list.length > 1 ? `\n\nAnd **${this.dispatcher.queue.queueSize - list[0].length}** more...` : ""}\n${list.length ? list[0].reverse().join("\n") : "Join a voice channel and queue songs by name or url in here."}`
                 });
             } else {
                 const data = await this.client.prisma.guilds.findFirst({
