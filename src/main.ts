@@ -1,12 +1,19 @@
+import { BucketScope } from "@sapphire/framework";
 import "dotenv/config";
 import process from "node:process";
-import { prefix } from "./config.js";
+import { devs, prefix } from "./config.js";
 import { Venti } from "./structures/Venti.js";
 
 const client = new Venti({
     intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES", "GUILD_MEMBERS"],
     loadMessageCommandListeners: true,
-    fetchPrefix: () => prefix
+    fetchPrefix: () => prefix,
+    defaultCooldown: {
+        delay: 10_000,
+        filteredUsers: devs,
+        limit: 2,
+        scope: BucketScope.Channel
+    }
 });
 
 process.on("unhandledRejection", e => {
