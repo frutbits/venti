@@ -67,7 +67,8 @@
     "@typescript-eslint/parser": "^5.19.0",
     "eslint": "^8.13.0",
     "prisma": "^3.12.0",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "typescript": "^4.6.3"
   },
   "dependencies": {
     "@lavalink/encoding": "^0.1.2",
@@ -79,6 +80,6 @@
     "dotenv": "^16.0.0",
     "got": "^12.0.3",
     "shoukaku": "^2.1.6",
-    "typescript": "^4.6.3"
+    "tslib": "^2.3.1"
   }
 }
