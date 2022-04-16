@@ -31,7 +31,7 @@ export class ShoukakuPlayerTrackEndListener extends Listener {
             await dispatcher.textChannel.send({
                 embeds: [
                     Util.createEmbed("info", "We've run out of songs! Better queue up some more tunes.")
-                        .setAuthor({ name: "Queue Concluded" })
+                        .setTitle("**Queue Concluded**")
                 ]
             }).then(x => x.id);
         }
