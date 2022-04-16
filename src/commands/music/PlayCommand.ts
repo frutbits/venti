@@ -6,6 +6,7 @@ import { ApplicationCommandOptionTypes } from "discord.js/typings/enums";
 import { devGuilds } from "../../config";
 import { CommandContext } from "../../structures/CommandContext";
 import { ShoukakuHandler } from "../../structures/ShoukakuHandler";
+import { Track } from "../../structures/Track";
 import { EmbedPlayer } from "../../utils/EmbedPlayer";
 import { Util } from "../../utils/Util";
 
@@ -96,20 +97,30 @@ export class PlayCommand extends Command {
             track: x,
             requester: ctx.author.id
         }));
-        dispatcher.addTracks(
+        const added = await dispatcher.addTracks(
             result.type === "PLAYLIST" ? toAdd : [toAdd[0]]
         );
-        if (!dispatcher.player?.track) {
+        if (!dispatcher.player?.track && added.success.length) {
             dispatcher.player?.playTrack(dispatcher.queue[0].base64);
         }
         await dispatcher.embedPlayer?.update();
-        if (!requester && !ctx.isCommandInteraction()) {
+        if (added.success.length) {
             return ctx.send({
                 embeds: [
                     Util.createEmbed(
                         "success",
                         `Added ${result.type === "PLAYLIST" ? `**${result.playlistName ?? "Unknown Playlist"}** (${result.tracks.length} tracks)` : `\`${DiscordJSUtil.escapeMarkdown(toAdd[0].track.info.title!)}\``} to the queue`,
                         true
+                    ).setThumbnail(result.type === "PLAYLIST" ? " " : new Track(toAdd[0].track, ctx.author.id).displayThumbnail)
+                ]
+            });
+        }
+        if (added.overload.length || added.duplicate.length) {
+            return ctx.send({
+                embeds: [
+                    Util.createEmbed(
+                        "error",
+                        `Over ${added.duplicate.length ? `\`${added.duplicate.length}\` duplicate tracks are skipped` : ""} ${added.overload.length ? `${added.duplicate.length ? "and" : ""} over \`${added.overload.length}\` tracks are skipped because exceeds max queue limit for this server (${added.queueLimit!} tracks)` : ""}`
                     )
                 ]
             });

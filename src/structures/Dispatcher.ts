@@ -61,15 +61,32 @@ export class Dispatcher {
         return { success: true };
     }
 
-    public addTracks(data: { track: ShoukakuTrack; requester: string }[]): boolean[] {
-        const added: boolean[] = [];
+    public async addTracks(
+        data: { track: ShoukakuTrack; requester: string }[]
+    ): Promise<{ duplicate: string[]; overload: string[]; success: string[]; queueLimit: number | null }> {
+        const settings = await this.client.databases.guild.get(this.guild.id, {
+            select: {
+                allow_duplicate: true,
+                max_queue: true
+            }
+        });
+        const added: { duplicate: string[]; overload: string[]; success: string[]; queueLimit: number | null } = {
+            duplicate: [],
+            overload: [],
+            success: [],
+            queueLimit: settings.max_queue
+        };
         for (const { track, requester } of data) {
-            if (this.queue.some(x => x.info.identifier === track.info.identifier)) {
-                added.push(false);
+            if (!settings.allow_duplicate && this.queue.some(x => x.info.identifier === track.info.identifier)) {
+                added.duplicate.push(track.track);
+                continue;
+            }
+            if (settings.max_queue && !isNaN(settings.max_queue) && this.queue.length >= settings.max_queue) {
+                added.overload.push(track.track);
                 continue;
             }
             this.queue.push(new Track(track, requester));
-            added.push(true);
+            added.success.push(track.track);
         }
         return added;
     }
