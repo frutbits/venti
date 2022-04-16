@@ -72,7 +72,14 @@ export class PlayCommand extends Command {
             });
         }
         const query = argsQuery?.value ?? ctx.options?.getString("query", true);
-        const result = await this.container.client.shoukaku.getNode().rest.resolve(query!, ShoukakuHandler.getProvider(query!));
+        const result = await ShoukakuHandler.restResolve(this.container.client.shoukaku.getNode(), query!, ShoukakuHandler.getProvider(query!));
+        if ("error" in result) {
+            return ctx.send({
+                embeds: [
+                    Util.createEmbed("error", `Error when searching track: \`${result.error}\``, true)
+                ]
+            });
+        }
         if (result.type === "NO_MATCHES" || !result.tracks.length) {
             return ctx.send({
                 embeds: [
@@ -107,16 +114,26 @@ export class PlayCommand extends Command {
             dispatcher.player?.playTrack(dispatcher.queue[0].base64);
         }
         await dispatcher.embedPlayer?.update();
-        if (added.success.length) {
-            return ctx.send({
+        const sendTrackAdded = async (): Promise<void> => {
+            await ctx.send({
                 embeds: [
                     Util.createEmbed(
                         "success",
-                        `Added ${result.type === "PLAYLIST" ? `**${result.playlistName ?? "Unknown Playlist"}** (${result.tracks.length} tracks)` : `\`${DiscordJSUtil.escapeMarkdown(toAdd[0].track.info.title!)}\``} to the queue`,
+                        `Added ${result.type === "PLAYLIST" ? `**${result.playlistName ?? "Unknown Playlist"}** (${added.success.length} tracks)` : `\`${DiscordJSUtil.escapeMarkdown(toAdd[0].track.info.title!)}\``} to the queue`,
                         true
                     ).setThumbnail(result.type === "PLAYLIST" ? " " : new Track(toAdd[0].track, ctx.author.id).displayThumbnail)
                 ]
             });
+        };
+
+        if (added.success.length) {
+            if (ctx.isCommandInteraction()) await sendTrackAdded();
+            if (!ctx.isCommandInteraction() && requester?.channel?.id !== ctx.context.channelId) {
+                await sendTrackAdded();
+            }
+            if (!ctx.isCommandInteraction() && requester?.channel?.id === ctx.context.channelId && result.type === "PLAYLIST") {
+                await sendTrackAdded();
+            }
         }
         if (added.overload.length || added.duplicate.length) {
             return ctx.send({

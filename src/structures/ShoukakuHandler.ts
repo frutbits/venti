@@ -1,5 +1,5 @@
 import { Collection } from "discord.js";
-import shoukaku, { LavalinkSource } from "shoukaku";
+import shoukaku, { LavalinkSource, ShoukakuSocket, ShoukakuTrackList } from "shoukaku";
 import { lavalink } from "../config";
 import { DispatcherOptions } from "../typings";
 import { Util } from "../utils/Util";
@@ -24,5 +24,9 @@ export class ShoukakuHandler extends Shoukaku {
     public static getProvider(query: string): LavalinkSource | undefined {
         if (Util.isValidURL(query)) return undefined;
         return "youtube";
+    }
+
+    public static restResolve(node: ShoukakuSocket, identifier: string, search?: LavalinkSource): Promise<ShoukakuTrackList | { error: string }> {
+        return node.rest.resolve(identifier, search).catch((e: Error) => ({ error: e.message }));
     }
 }
