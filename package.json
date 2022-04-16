@@ -12,8 +12,8 @@
     "start": "node --experimental-specifier-resolution=node dist/main",
     "start:dev": "rimraf ./dist && npm run compile && npm start",
     "prisma:generate": "prisma generate",
-		"prisma:pull": "prisma db pull",
-		"prisma:push": "prisma db push"
+    "prisma:pull": "prisma db pull",
+    "prisma:push": "prisma db push"
   },
   "repository": {
     "type": "git",
@@ -68,8 +68,7 @@
     "eslint": "^8.13.0",
     "prisma": "^3.12.0",
     "rimraf": "^3.0.2",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.6.3"
+    "ts-node": "^10.7.0"
   },
   "dependencies": {
     "@lavalink/encoding": "^0.1.2",
@@ -80,6 +79,7 @@
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
     "got": "^12.0.3",
-    "shoukaku": "^2.1.6"
+    "shoukaku": "^2.1.6",
+    "typescript": "^4.6.3"
   }
 }
