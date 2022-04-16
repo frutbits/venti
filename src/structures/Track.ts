@@ -28,7 +28,7 @@ export class DecodeTrack {
 
         const artworkUrl = input.readBoolean() ? input.readUTF() : null;
 
-        this.artworkUrl = artworkUrl?.startsWith("https://i.ytimg.com") ? null : artworkUrl ?? null;
+        this.artworkUrl = artworkUrl;
         this.source = input.readUTF();
         this.position = Number(input.readLong());
     }
