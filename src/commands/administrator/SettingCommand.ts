@@ -1,6 +1,6 @@
 import { ApplyOptions } from "@sapphire/decorators";
 import { ApplicationCommandRegistry, Args, Command, RegisterBehavior } from "@sapphire/framework";
-import { ApplicationCommandOptionData, CommandInteraction, Message, MessageActionRow, MessageButton } from "discord.js";
+import { ApplicationCommandOptionData, CommandInteraction, Message, MessageActionRow, MessageButton, TextChannel } from "discord.js";
 import { ApplicationCommandOptionTypes } from "discord.js/typings/enums";
 import { devGuilds, isDev, prefix } from "../../config";
 import { CommandContext } from "../../structures/CommandContext";
@@ -74,7 +74,7 @@ export class SettingCommand extends Command {
         switch (command) {
             case "requester": {
                 const channelArgs = await ctx.args?.pick("channel");
-                const channel = ctx.options?.getChannel("channel", true);
+                let channel = ctx.options?.getChannel("channel", true);
                 if ((!channelArgs?.isText() && !ctx.options) || (!ctx.args && !channel?.isText())) {
                     return ctx.send({
                         embeds: [
@@ -82,6 +82,7 @@ export class SettingCommand extends Command {
                         ]
                     });
                 }
+                if (!channel) channel = channelArgs as TextChannel;
                 const data = await this.container.client.databases.guild.get(ctx.context.guildId!, {
                     select: {
                         requester_channel: true,
@@ -98,7 +99,7 @@ export class SettingCommand extends Command {
                         });
                     }
                 }
-                if (!channel?.permissionsFor(this.container.client.user!.id)?.has(["SEND_MESSAGES", "ATTACH_FILES"])) {
+                if (!channel.permissionsFor(this.container.client.user!.id)?.has(["SEND_MESSAGES", "ATTACH_FILES"])) {
                     return ctx.send({
                         embeds: [Util.createEmbed("error", "I need these permissions to make requester channel: `SEND_MESSAGES`, `ATTACH_FILES`")]
                     });
