@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { Args } from "@sapphire/framework";
-import { CommandInteraction, InteractionReplyOptions, Message, MessagePayload, MessageOptions, GuildChannel, InteractionType, ButtonInteraction, SelectMenuInteraction } from "discord.js";
-import { InteractionTypes, MessageComponentTypes } from "discord.js/typings/enums";
+import { CommandInteraction, InteractionReplyOptions, Message, MessagePayload, MessageOptions, GuildChannel, ButtonInteraction, SelectMenuInteraction, InteractionType } from "discord.js";
+import { InteractionTypes, MessageComponentTypes } from "../typings/enum";
 
 export type MessageInteractionAction = "editReply" | "followUp" | "reply";
 
@@ -45,8 +46,7 @@ export class CommandContext {
     }
 
     public isCommand(): boolean {
-        // @ts-expect-error-next-line
-        return InteractionTypes[this.context.type as InteractionType] === InteractionTypes.APPLICATION_COMMAND && typeof (this.context as { targetId: string | undefined }).targetId === "undefined";
+        return InteractionTypes[this.context.type as InteractionType] === InteractionTypes.APPLICATION_COMMAND && typeof (this.context as unknown as { targetId: string | undefined }).targetId === "undefined";
     }
 
     public isMessageCommand(): boolean {
@@ -54,30 +54,24 @@ export class CommandContext {
     }
 
     public isContextMenu(): boolean {
-        // @ts-expect-error-next-line
-        return InteractionTypes[this.context.type as InteractionType] === InteractionTypes.APPLICATION_COMMAND && typeof (this.context as { targetId: string | undefined }).targetId !== "undefined";
+        return InteractionTypes[this.context.type as InteractionType] === InteractionTypes.APPLICATION_COMMAND && typeof (this.context as unknown as { targetId: string | undefined }).targetId !== "undefined";
     }
 
     public isMessageComponent(): boolean {
-        // @ts-expect-error-next-line
         return InteractionTypes[this.context.type as InteractionType] === InteractionTypes.MESSAGE_COMPONENT;
     }
 
     public isButton(): boolean {
         return (
-            // @ts-expect-error-next-line
             InteractionTypes[this.context.type as InteractionType] === InteractionTypes.MESSAGE_COMPONENT &&
-            // @ts-expect-error-next-line
             MessageComponentTypes[(this.context as unknown as ButtonInteraction).componentType] === MessageComponentTypes.BUTTON
         );
     }
 
     public isSelectMenu(): boolean {
         return (
-            // @ts-expect-error-next-line
             InteractionTypes[this.context.type as InteractionType] === InteractionTypes.MESSAGE_COMPONENT &&
-            // @ts-expect-error-next-line
-            MessageComponentTypes[(this.context as SelectMenuInteraction).componentType] === MessageComponentTypes.SELECT_MENU
+            MessageComponentTypes[(this.context as unknown as SelectMenuInteraction).componentType] === MessageComponentTypes.SELECT_MENU
         );
     }
 }
