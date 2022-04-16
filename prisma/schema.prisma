@@ -12,9 +12,9 @@ model guilds {
   requester_channel String?  @db.VarChar
   requester_message String?  @db.VarChar
   prefix            String?  @db.VarChar
-  dj_only           Boolean? @default(false)
+  dj_state          Boolean? @default(false)
   dj_roles          String[] @db.VarChar
-  allow_duplicate  Boolean? @default(false)
+  allow_duplicate   Boolean? @default(false)
   max_queue         Int?
   default_volume    Int?     @default(100)
 }
