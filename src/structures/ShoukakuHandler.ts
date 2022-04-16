@@ -27,6 +27,12 @@ export class ShoukakuHandler extends Shoukaku {
     }
 
     public static restResolve(node: ShoukakuSocket, identifier: string, search?: LavalinkSource): Promise<ShoukakuTrackList | { error: string }> {
-        return node.rest.resolve(identifier, search).catch((e: Error) => ({ error: e.message }));
+        try {
+            return node.rest.resolve(identifier, search);
+        } catch (error) {
+            return Promise.resolve({
+                error: (error as Error).message
+            });
+        }
     }
 }
