@@ -38,4 +38,8 @@ export class CommandContext {
         }
         return msg;
     }
+
+    public isCommandInteraction(): boolean {
+        return this.context instanceof CommandInteraction;
+    }
 }
