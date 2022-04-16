@@ -39,10 +39,12 @@ export class StopCommand extends Command {
         const dispatcher = this.container.client.shoukaku.queue.get(ctx.context.guildId!);
         if (dispatcher?.embedPlayer?.textChannel?.id === ctx.context.channelId) ctx.isInsideRequesterChannel = true;
         dispatcher?.destroy();
-        return ctx.send({
-            embeds: [
-                Util.createEmbed("success", "Stopped and deleted current queue.", true)
-            ]
-        });
+        if (!ctx.isInsideRequesterChannel) {
+            return ctx.send({
+                embeds: [
+                    Util.createEmbed("success", "Stopped and deleted current queue.", true)
+                ]
+            });
+        }
     }
 }
