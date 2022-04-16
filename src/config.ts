@@ -4,7 +4,7 @@ export const devs: string[] = JSON.parse(process.env.CONFIG_DEVS ?? "[]");
 export const devGuilds = JSON.parse(process.env.CONFIG_DEV_GUILDS ?? "[]");
 export const isDev = process.env.NODE_ENV === "DEVELOPMENT";
 export const prefix = process.env.CONFIG_PREFIX!;
-export const lavalinkRest: { host: string; auth: string } = JSON.parse(process.env.LAVALINK_REST ?? "{}");
+export const lavalinkRest: { host?: string; auth?: string } = JSON.parse(process.env.LAVALINK_REST ?? "{}");
 export const lavalink = {
     servers: JSON.parse(process.env.LAVALINK_NODES ?? "[]") as NodeOptions[],
     options: {
