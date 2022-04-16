@@ -8,8 +8,7 @@ import { CommandContext } from "../../structures/CommandContext";
     name: "ping",
     description: "Shows the current ping of the bot",
     chatInputCommand: {
-        register: true,
-        behaviorWhenNotIdentical: RegisterBehavior.Overwrite
+        register: true
     }
 })
 export class PingCommand extends Command {
@@ -17,6 +16,9 @@ export class PingCommand extends Command {
         registry.registerChatInputCommand({
             name: this.name,
             description: this.description
+        }, {
+            behaviorWhenNotIdentical: RegisterBehavior.Overwrite,
+            registerCommandIfMissing: true
         });
     }
 
