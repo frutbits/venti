@@ -16,7 +16,7 @@ export class isPlayerExists extends Precondition {
     }
 
     private precondition(ctx: CommandContext): PreconditionResult {
-        if (!this.container.client.shoukaku.queue.get(ctx.context.guildId!)) {
+        if (!this.container.client.shoukaku.queue.get(ctx.context.guildId!)?.player) {
             return this.error({
                 message: "I'm not playing anything right now"
             });
