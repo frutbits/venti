@@ -26,10 +26,7 @@ export class DecodeTrack {
         this.identifier = input.readUTF();
         this.isStream = input.readBoolean();
         this.uri = input.readBoolean() ? input.readUTF() : null;
-
-        const artworkUrl = input.readBoolean() ? input.readUTF() : null;
-
-        this.artworkUrl = artworkUrl;
+        this.artworkUrl = input.readBoolean() ? input.readUTF() : null;
         this.source = input.readUTF();
         this.position = Number(input.readLong());
     }
