@@ -1,5 +1,6 @@
 import { Util } from "discord.js";
 import { ShoukakuTrack } from "shoukaku";
+import { decode } from "@lavalink/encoding";
 import DataInput from "../utils/DataInput";
 
 export class DecodeTrack {
@@ -43,7 +44,11 @@ export class Track {
         try {
             this.raw = new DecodeTrack(new Uint8Array(Buffer.from(this.base64, "base64")));
         } catch {
-            throw new Error("Trying to decode invalid base64");
+            try {
+                this.raw = decode(this.base64) as unknown as DecodeTrack;
+            } catch {
+                throw new Error("Trying to decode invalid base64");
+            }
         }
     }
 
