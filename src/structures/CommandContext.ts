@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { Args } from "@sapphire/framework";
-import { CommandInteraction, InteractionReplyOptions, Message, MessagePayload, MessageOptions, GuildChannel, ButtonInteraction, SelectMenuInteraction, InteractionType } from "discord.js";
+import { CommandInteraction, InteractionReplyOptions, Message, MessagePayload, MessageOptions, GuildChannel, ButtonInteraction, SelectMenuInteraction, InteractionType, Interaction } from "discord.js";
 import { InteractionTypes, MessageComponentTypes } from "../typings/enum";
 
 export type MessageInteractionAction = "editReply" | "followUp" | "reply";
 
 export class CommandContext {
-    public author = this.context instanceof CommandInteraction ? this.context.user : this.context.author;
+    public author = this.isInteraction() ? (this.context as Interaction).user : (this.context as Message).author;
     public channel = this.context.channel;
     public options = this.context instanceof CommandInteraction ? this.context.options : undefined;
     public isInsideRequesterChannel = false;
