@@ -14,7 +14,7 @@ model guilds {
   prefix            String?  @db.VarChar
   dj_only           Boolean? @default(false)
   dj_roles          String[] @db.VarChar
-  allow_dupelicate  Boolean? @default(false)
+  allow_duplicate  Boolean? @default(false)
   max_queue         Int?
   default_volume    Int?     @default(100)
 }
