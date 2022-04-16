@@ -15,7 +15,7 @@ export class MessageCommandDeniedListener extends Listener<typeof Events.Message
         const cooldownRemaining = Reflect.get(Object(context), "remaining") as number | undefined;
         if (cooldownRemaining && identifier === Identifiers.PreconditionCooldown) {
             payload.embeds = [
-                Util.createEmbed("error", `**${message.author.username}**, please wait **${cooldownRemaining.toFixed(1)}** cooldown time.`, true)
+                Util.createEmbed("error", `**${message.author.username}**, please wait **${(cooldownRemaining / 1000).toFixed(1)}** cooldown time.`, true)
             ];
         }
         const missingPerms = Reflect.get(Object(context), "missing") as PermissionString[] | undefined;

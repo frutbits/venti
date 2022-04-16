@@ -15,7 +15,7 @@ export class ChatInputCommandDeniedListener extends Listener<typeof Events.ChatI
         const cooldownRemaining = Reflect.get(Object(context), "remaining") as number | undefined;
         if (cooldownRemaining && identifier === Identifiers.PreconditionCooldown) {
             payload.embeds = [
-                Util.createEmbed("error", `**${interaction.user.username}**, please wait **${cooldownRemaining.toFixed(1)}** cooldown time.`, true)
+                Util.createEmbed("error", `**${interaction.user.username}**, please wait **${(cooldownRemaining / 1000).toFixed(1)}** cooldown time.`, true)
             ];
         }
         const missingPerms = Reflect.get(Object(context), "missing") as PermissionString[] | undefined;
