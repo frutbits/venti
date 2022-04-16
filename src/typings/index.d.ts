@@ -27,5 +27,6 @@ declare module "@sapphire/framework" {
         memberVoiceJoinable: never;
         memberInSameVoice: never;
         isNodeAvailable: never;
+        isInsideRequester: never;
     }
 }
