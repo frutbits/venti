@@ -28,7 +28,7 @@ export class ShoukakuPlayerTrackEndListener extends Listener {
         void dispatcher.embedPlayer?.update();
         if (dispatcher.queue.length) return player.playTrack(dispatcher.queue[0].base64);
         if (!dispatcher.embedPlayer?.message) {
-            dispatcher.oldMusicMessage = await dispatcher.textChannel.send({
+            await dispatcher.textChannel.send({
                 embeds: [
                     Util.createEmbed("info", "We've run out of songs! Better queue up some more tunes.")
                         .setAuthor({ name: "Queue Concluded" })
