@@ -4,9 +4,9 @@ import { CommandInteraction, Message } from "discord.js";
 import { CommandContext } from "../structures/CommandContext";
 
 @ApplyOptions<PreconditionOptions>({
-    name: "isPlayerExists"
+    name: "isPlayerPlaying"
 })
-export class isPlayerExists extends Precondition {
+export class isPlayerPlaying extends Precondition {
     public chatInputRun(interaction: CommandInteraction<"cached">): PreconditionResult {
         return this.precondition(new CommandContext(interaction));
     }
@@ -16,7 +16,7 @@ export class isPlayerExists extends Precondition {
     }
 
     private precondition(ctx: CommandContext): PreconditionResult {
-        if (!this.container.client.shoukaku.queue.get(ctx.context.guildId!)?.player) {
+        if (!this.container.client.shoukaku.queue.get(ctx.context.guildId!)?.player?.track) {
             return this.error({
                 message: "I'm not playing anything right now"
             });
