@@ -16,9 +16,7 @@ import { Util } from "../../utils/Util";
     description: "Add a music to the queue",
     preconditions: ["isNodeAvailable", "memberInVoice", "memberVoiceJoinable", "memberInSameVoice"],
     chatInputCommand: {
-        register: true,
-        guildIds: devGuilds,
-        behaviorWhenNotIdentical: RegisterBehavior.Overwrite
+        register: true
     },
     requiredClientPermissions: ["EMBED_LINKS"]
 })
@@ -35,6 +33,10 @@ export class PlayCommand extends Command {
                     required: true
                 }
             ]
+        }, {
+            registerCommandIfMissing: true,
+            guildIds: devGuilds,
+            behaviorWhenNotIdentical: RegisterBehavior.Overwrite
         });
     }
 
