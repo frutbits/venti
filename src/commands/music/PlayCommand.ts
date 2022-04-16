@@ -3,7 +3,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { ApplicationCommandRegistry, Args, Command, RegisterBehavior } from "@sapphire/framework";
 import { CommandInteraction, Message, TextChannel, VoiceChannel, Util as DiscordJSUtil } from "discord.js";
 import { ApplicationCommandOptionTypes } from "discord.js/typings/enums";
-import { devGuilds } from "../../config";
+import { devGuilds, isDev } from "../../config";
 import { CommandContext } from "../../structures/CommandContext";
 import { ShoukakuHandler } from "../../structures/ShoukakuHandler";
 import { Track } from "../../structures/Track";
@@ -35,7 +35,7 @@ export class PlayCommand extends Command {
             ]
         }, {
             registerCommandIfMissing: true,
-            guildIds: devGuilds,
+            guildIds: isDev ? devGuilds : [],
             behaviorWhenNotIdentical: RegisterBehavior.Overwrite
         });
     }

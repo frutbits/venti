@@ -1,6 +1,7 @@
 import { ApplyOptions } from "@sapphire/decorators";
 import { ApplicationCommandRegistry, Command, RegisterBehavior } from "@sapphire/framework";
 import { ColorResolvable, CommandInteraction, Message, MessageEmbed } from "discord.js";
+import { devGuilds, isDev } from "../../config";
 import { CommandContext } from "../../structures/CommandContext";
 
 @ApplyOptions<Command.Options>({
@@ -19,6 +20,7 @@ export class PingCommand extends Command {
             name: this.name,
             description: this.description
         }, {
+            guildIds: isDev ? devGuilds : [],
             behaviorWhenNotIdentical: RegisterBehavior.Overwrite,
             registerCommandIfMissing: true
         });

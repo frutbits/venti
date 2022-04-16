@@ -1,7 +1,7 @@
 import { ApplyOptions } from "@sapphire/decorators";
 import { ApplicationCommandRegistry, Args, Command, RegisterBehavior } from "@sapphire/framework";
 import { CommandInteraction, Message } from "discord.js";
-import { devGuilds } from "../../config";
+import { devGuilds, isDev } from "../../config";
 import { CommandContext } from "../../structures/CommandContext";
 import { Util } from "../../utils/Util";
 
@@ -22,7 +22,7 @@ export class StopCommand extends Command {
             description: this.description
         }, {
             registerCommandIfMissing: true,
-            guildIds: devGuilds,
+            guildIds: isDev ? devGuilds : [],
             behaviorWhenNotIdentical: RegisterBehavior.Overwrite
         });
     }
