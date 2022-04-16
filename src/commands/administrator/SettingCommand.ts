@@ -10,11 +10,13 @@ import { Util } from "../../utils/Util";
 @ApplyOptions<Command.Options>({
     aliases: [],
     name: "set",
+    preconditions: ["isInsideRequester"],
     description: "Customize bot's settings",
     chatInputCommand: {
         register: true
     },
-    requiredUserPermissions: ["MANAGE_GUILD"]
+    requiredUserPermissions: ["MANAGE_GUILD"],
+    requiredClientPermissions: ["EMBED_LINKS"]
 })
 export class SettingCommand extends Command {
     private readonly commands: ApplicationCommandOptionData[] = [

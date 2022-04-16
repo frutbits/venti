@@ -6,10 +6,12 @@ import { CommandContext } from "../../structures/CommandContext";
 @ApplyOptions<Command.Options>({
     aliases: [],
     name: "ping",
+    preconditions: ["isInsideRequester"],
     description: "Shows the current ping of the bot",
     chatInputCommand: {
         register: true
-    }
+    },
+    requiredClientPermissions: ["EMBED_LINKS"]
 })
 export class PingCommand extends Command {
     public override registerApplicationCommands(registry: ApplicationCommandRegistry): void {
