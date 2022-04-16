@@ -69,6 +69,7 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
+    "@lavalink/encoding": "^0.1.2",
     "@prisma/client": "^3.12.0",
     "@sapphire/decorators": "^4.3.4",
     "@sapphire/framework": "^3.0.0-next.fd7be0b.0",
