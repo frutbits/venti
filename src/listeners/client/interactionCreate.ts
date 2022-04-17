@@ -28,7 +28,7 @@ export class InteractionCreateListener extends Listener {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 return this.container.client.emit(Events.ChatInputCommandDenied, preconditionsResult.error, { command, interaction } as any);
             }
-            await interaction.deferUpdate();
+            await interaction.deferReply({ ephemeral: true });
             return command.chatInputRun(interaction as unknown as CommandInteraction, context);
         }
     }
