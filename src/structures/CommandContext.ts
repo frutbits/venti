@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { Args } from "@sapphire/framework";
+import { send } from "@sapphire/plugin-editable-commands";
 import { CommandInteraction, InteractionReplyOptions, Message, MessagePayload, MessageOptions, GuildChannel, ButtonInteraction, SelectMenuInteraction, InteractionType, Interaction } from "discord.js";
 import { InteractionTypes, MessageComponentTypes } from "../typings/enum";
 
@@ -32,7 +33,7 @@ export class CommandContext {
 
         if ((options as MessageOptions).embeds && !(this.context.channel as GuildChannel).permissionsFor(this.context.guild!.me!).has(["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"])) return null;
 
-        const msg = await this.context.channel.send(options);
+        const msg = await send(this.context, options as MessageOptions);
         if (this.isInsideRequesterChannel) {
             setTimeout(async () => {
                 if (msg.deletable) await msg.delete();
