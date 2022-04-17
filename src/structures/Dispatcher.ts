@@ -33,6 +33,7 @@ export class Dispatcher {
     public readonly textChannel = this.options.textChannel;
     public readonly voiceChannel = this.options.voiceChannel;
     public readonly queue = new Queue();
+    public timeout: NodeJS.Timeout | null = null;
     public votes: string[] = [];
     public loopState: LoopType = LoopType.NONE;
     public player!: ShoukakuPlayer | null;
