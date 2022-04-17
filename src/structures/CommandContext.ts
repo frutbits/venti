@@ -17,7 +17,7 @@ export class CommandContext {
     public async send(options: InteractionReplyOptions | MessageOptions | MessagePayload, fetchReply?: true): Promise<Message | null>;
     public async send(options: InteractionReplyOptions | MessageOptions | MessagePayload, fetchReply?: false): Promise<null>;
     public async send(options: InteractionReplyOptions | MessageOptions | MessagePayload, fetchReply = false): Promise<Message | null> {
-        if (this.context instanceof CommandInteraction) {
+        if (this.context instanceof Interaction) {
             const interaction = this.context as CommandInteraction;
             if (interaction.deferred && !interaction.replied) {
                 return interaction.editReply(options as InteractionReplyOptions) as Promise<Message | null>;
