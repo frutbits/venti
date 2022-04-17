@@ -11,7 +11,6 @@ import { Util } from "../../utils/Util";
 export class VoiceStateUpdateEvent extends Listener {
     public override async run(oldState: VoiceState, newState: VoiceState): Promise<any> {
         const dispatcher = this.container.client.shoukaku.queue.get(newState.guild.id);
-        console.log(dispatcher);
         if (!dispatcher) return undefined;
 
         const newVC = newState.channel;
