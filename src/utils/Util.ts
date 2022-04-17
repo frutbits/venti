@@ -1,4 +1,5 @@
 import { ColorResolvable, MessageEmbed, PermissionString } from "discord.js";
+import prettyMilliseconds from "pretty-ms";
 import { embedInfoColor, Emojis } from "../constants";
 import { Venti } from "../structures/Venti";
 
@@ -12,6 +13,15 @@ const hexColors: Record<hexColorsType, string> = {
 
 export class Util {
     public constructor(public readonly client: Venti) {}
+
+    public static formatMS(ms: number): string {
+        if (isNaN(ms)) throw new Error("value is not a number.");
+        return prettyMilliseconds(ms, {
+            verbose: true,
+            compact: false,
+            secondsDecimalDigits: 0
+        });
+    }
 
     public static createEmbed(type: hexColorsType, message?: string, emoji = false): MessageEmbed {
         const embed = new MessageEmbed()
