@@ -75,6 +75,7 @@
     "@prisma/client": "^3.12.0",
     "@sapphire/decorators": "^4.3.4",
     "@sapphire/framework": "^3.0.0-next.fd7be0b.0",
+    "@sapphire/plugin-editable-commands": "^1.2.0",
     "@sapphire/plugin-logger": "^2.2.1",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
