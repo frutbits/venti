@@ -78,6 +78,7 @@ export class VoiceStateUpdateEvent extends Listener {
             if (vcMembers.size !== 0) return undefined;
             clearTimeout(dispatcher.timeout!);
             dispatcher.timeout = null;
+            void dispatcher.embedPlayer?.update();
             dispatcher.player?.setPaused(true);
             const duration = Util.formatMS(deleteQueueTimeout);
             dispatcher.oldVoiceStateUpdateMessage = null;
@@ -115,6 +116,7 @@ If there's no one who joins my voice channel in the next **${duration}**, the qu
                 clearTimeout(dispatcher.timeout!);
                 dispatcher.timeout = null;
                 dispatcher.oldVoiceStateUpdateMessage = null;
+                void dispatcher.embedPlayer?.update();
                 dispatcher.player.setPaused(false);
             } catch (e) { this.container.client.logger.error(e); }
         }
