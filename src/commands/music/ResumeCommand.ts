@@ -50,12 +50,10 @@ export class ResumeCommand extends Command {
         }
         dispatcher.player.setPaused(false);
         await dispatcher.embedPlayer?.update();
-        if (!ctx.isInsideRequesterChannel && ctx.isMessageCommand()) {
-            return ctx.send({
-                embeds: [
-                    Util.createEmbed("success", "⏸ **|** Resumed current playback")
-                ]
-            });
-        }
+        return ctx.send({
+            embeds: [
+                Util.createEmbed("success", "⏸ **|** Resumed current playback")
+            ]
+        });
     }
 }
