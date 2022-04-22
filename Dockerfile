@@ -1,4 +1,4 @@
-FROM hazmi35/node:17-dev-alpine as build-stage
+FROM hazmi35/node:18-dev-alpine as build-stage
 
 LABEL name "venti (build-stage)"
 LABEL maintainer "Zen <zen@zhycorp.org>"
@@ -25,7 +25,7 @@ RUN npm run build
 RUN npm prune --production
 
 # Get ready for production
-FROM hazmi35/node:17-alpine
+FROM hazmi35/node:18-alpine
 
 LABEL name "venti"
 LABEL maintainer "Zen <zen@zhycorp.org>"
