@@ -1,6 +1,6 @@
 {
   "name": "venti",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A Venti the bard— A Discord music bot with Lavalink featured with an awesome new thing on Discord.",
   "main": "dist/main.js",
   "type": "module",
