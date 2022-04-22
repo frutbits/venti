@@ -26,6 +26,13 @@ export class Queue extends Array<Track> {
     public get queued(): Track[] {
         return this.filter((x, i) => i !== 0);
     }
+
+    public shuffle(): void {
+        for (let i = this.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [this[i], this[j]] = [this[j], this[i]];
+        }
+    }
 }
 
 export class Dispatcher {
