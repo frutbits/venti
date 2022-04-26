@@ -26,9 +26,14 @@ export class CommandContext {
                     ? { content: options, ephemeral: interaction.ephemeral ?? false } as InteractionReplyOptions
                     : { ...options, ephemeral: interaction.ephemeral ?? false } as InteractionReplyOptions) as Promise<Message | null>;
             }
-            return interaction.reply(typeof options === "string"
+            if (this.isInsideRequesterChannel) {
+                // @ts-expect-error-next-line
+                if (typeof options !== "string") options.ephemeral = true;
+            }
+            const msg = await interaction.reply(typeof options === "string"
                 ? { content: options, fetchReply } as InteractionReplyOptions
-                : { ...options, fetchReply } as InteractionReplyOptions) as unknown as Promise<Message | null>;
+                : { ...options, fetchReply } as InteractionReplyOptions) as unknown as Message | null;
+            return msg;
         }
 
         if ((options as MessageOptions).embeds && !(this.context.channel as GuildChannel).permissionsFor(this.context.guild!.me!).has(["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"])) return null;
