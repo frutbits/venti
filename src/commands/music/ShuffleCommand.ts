@@ -41,7 +41,7 @@ export class ShuffleCommand extends Command {
         dispatcher?.queue.shuffle();
         return ctx.send({
             embeds: [
-                Util.createEmbed("success", "🔀 **|** Shuffled current queue", true)
+                Util.createEmbed("success", "🔀 **|** Shuffled current queue")
             ]
         });
     }
