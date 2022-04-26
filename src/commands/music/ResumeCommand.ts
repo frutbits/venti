@@ -1,6 +1,6 @@
 import { ApplyOptions } from "@sapphire/decorators";
 import { ApplicationCommandRegistry, Args, Command, RegisterBehavior } from "@sapphire/framework";
-import { CommandInteraction, Message } from "discord.js";
+import { ButtonInteraction, CommandInteraction, Message } from "discord.js";
 import { devGuilds, isDev } from "../../config";
 import { CommandContext } from "../../structures/CommandContext";
 import { Util } from "../../utils/Util";
@@ -36,6 +36,7 @@ export class ResumeCommand extends Command {
     }
 
     public async run(ctx: CommandContext): Promise<any> {
+        if (ctx.context instanceof ButtonInteraction) await ctx.context.deferUpdate();
         const dispatcher = this.container.client.shoukaku.queue.get(ctx.context.guildId!);
         if (dispatcher?.embedPlayer?.textChannel?.id === ctx.context.channelId) ctx.isInsideRequesterChannel = true;
         if (!dispatcher?.player?.paused) {
@@ -50,10 +51,12 @@ export class ResumeCommand extends Command {
         }
         dispatcher.player.setPaused(false);
         await dispatcher.embedPlayer?.update();
-        return ctx.send({
-            embeds: [
-                Util.createEmbed("success", "⏸ **|** Resumed current playback")
-            ]
-        });
+        if (!ctx.isInsideRequesterChannel) {
+            return ctx.send({
+                embeds: [
+                    Util.createEmbed("success", "⏸ **|** Resumed current playback")
+                ]
+            });
+        }
     }
 }
