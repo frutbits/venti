@@ -78,28 +78,32 @@ export class LoopCommand extends Command {
         switch (command) {
             case "queue": {
                 dispatcher!.loopState = LoopType.ALL;
-                return ctx.send({
+                await ctx.send({
                     embeds: [
                         Util.createEmbed("success", "🔁 **|** Repeating current queue")
                     ]
                 });
+                break;
             }
             case "track": {
                 dispatcher!.loopState = LoopType.ONE;
-                return ctx.send({
+                await ctx.send({
                     embeds: [
                         Util.createEmbed("success", "🔂 **|** Repeating current track")
                     ]
                 });
+                break;
             }
             case "disable": {
                 dispatcher!.loopState = LoopType.NONE;
-                return ctx.send({
+                await ctx.send({
                     embeds: [
                         Util.createEmbed("success", "Disabled loop", true)
                     ]
                 });
+                break;
             }
         }
+        await dispatcher?.embedPlayer?.update();
     }
 }
