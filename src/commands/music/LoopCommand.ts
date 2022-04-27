@@ -98,7 +98,7 @@ export class LoopCommand extends Command {
                 dispatcher!.loopState = LoopType.NONE;
                 await ctx.send({
                     embeds: [
-                        Util.createEmbed("success", "Disabled loop", true)
+                        Util.createEmbed("success", "Disabled loop mode", true)
                     ]
                 });
                 break;
