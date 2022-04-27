@@ -28,6 +28,12 @@ export class InteractionCreateListener extends Listener {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 return this.container.client.emit(Events.ChatInputCommandDenied, preconditionsResult.error, { command, interaction } as any);
             }
+            if (command.name === "loop") {
+                await interaction.deferUpdate();
+                const toChange = Number(dispatcher!.loopState) + 1;
+                dispatcher!.loopState = dispatcher?.loopState === 2 ? 0 : toChange;
+                return dispatcher?.embedPlayer?.update();
+            }
             return command.chatInputRun(interaction as unknown as CommandInteraction, context);
         }
     }
