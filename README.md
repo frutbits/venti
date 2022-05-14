@@ -23,4 +23,4 @@ Venti the bard— A Discord music bot with Lavalink featured with an awesome new
 ## Installation
 - Soon
 
-> **©️ All character belong to [Hoyoverse](https://www.hoyoverse.com/)**
+> **© All character belong to [Hoyoverse](https://www.hoyoverse.com/)**
