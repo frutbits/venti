@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
         "target": "ES2021",
-        "module": "ESNext",
-        "moduleResolution": "Node",
+        "module": "ES2022",
+        "moduleResolution": "node",
         "lib": ["ES2021"],
         "strict": true,
         "outDir": "dist",
@@ -10,7 +10,7 @@
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "skipLibCheck": false,
+        "skipLibCheck": true,
         "noEmitHelpers": true,
         "importHelpers": true,
         "resolveJsonModule": true,
@@ -18,4 +18,4 @@
     },
     "exclude": [],
     "include": ["src/**/*"]
-  }
+}
