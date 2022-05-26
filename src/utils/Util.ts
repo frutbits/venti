@@ -14,6 +14,14 @@ const hexColors: Record<hexColorsType, string> = {
 export class Util {
     public constructor(public readonly client: Venti) {}
 
+    public static formatDate(dateFormat: Intl.DateTimeFormat, date: Date | number = new Date()): string {
+        const data = dateFormat.formatToParts(date);
+        return "<year>-<month>-<day>"
+            .replace(/<year>/g, data.find(d => d.type === "year")!.value)
+            .replace(/<month>/g, data.find(d => d.type === "month")!.value)
+            .replace(/<day>/g, data.find(d => d.type === "day")!.value);
+    }
+
     public static formatMS(ms: number): string {
         if (isNaN(ms)) throw new Error("value is not a number.");
         return prettyMilliseconds(ms, {
