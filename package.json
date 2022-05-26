@@ -82,7 +82,7 @@
     "discord.js": "^13.7.0",
     "dotenv": "^16.0.1",
     "got": "^12.1.0",
-    "lavalink-api-types": "^0.1.9",
+    "lavalink-api-types": "^1.0.0",
     "pino-pretty": "^7.6.1",
     "pretty-ms": "^7.0.1",
     "shoukaku": "^3.0.5",
