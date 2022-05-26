@@ -1,5 +1,5 @@
-import { Snowflake } from "discord-api-types";
 import { guilds, Prisma } from "@prisma/client";
+import { Snowflake } from "discord-api-types/globals";
 import { Venti } from "../structures/Venti";
 
 export class GuildSetting {
