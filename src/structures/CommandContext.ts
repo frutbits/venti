@@ -52,6 +52,7 @@ export class CommandContext {
     }
 
     public isCommand(): boolean {
+        // @ts-expect-error-next-line
         return InteractionTypes[this.context.type as InteractionType] === InteractionTypes.APPLICATION_COMMAND && typeof (this.context as unknown as { targetId: string | undefined }).targetId === "undefined";
     }
 
@@ -60,23 +61,27 @@ export class CommandContext {
     }
 
     public isContextMenu(): boolean {
-        return InteractionTypes[this.context.type as InteractionType] === InteractionTypes.APPLICATION_COMMAND && typeof (this.context as unknown as { targetId: string | undefined }).targetId !== "undefined";
+        // @ts-expect-error-next-line
+        return InteractionTypes[this.context.type] === InteractionTypes.APPLICATION_COMMAND && typeof (this.context as unknown as { targetId: string | undefined }).targetId !== "undefined";
     }
 
     public isMessageComponent(): boolean {
-        return InteractionTypes[this.context.type as InteractionType] === InteractionTypes.MESSAGE_COMPONENT;
+        // @ts-expect-error-next-line
+        return InteractionTypes[this.context.type] === InteractionTypes.MESSAGE_COMPONENT;
     }
 
     public isButton(): boolean {
         return (
-            InteractionTypes[this.context.type as InteractionType] === InteractionTypes.MESSAGE_COMPONENT &&
+            // @ts-expect-error-next-line
+            InteractionTypes[this.context.type] === InteractionTypes.MESSAGE_COMPONENT &&
             MessageComponentTypes[(this.context as unknown as ButtonInteraction).componentType] === MessageComponentTypes.BUTTON
         );
     }
 
     public isSelectMenu(): boolean {
         return (
-            InteractionTypes[this.context.type as InteractionType] === InteractionTypes.MESSAGE_COMPONENT &&
+            // @ts-expect-error-next-line
+            InteractionTypes[this.context.type] === InteractionTypes.MESSAGE_COMPONENT &&
             MessageComponentTypes[(this.context as unknown as SelectMenuInteraction).componentType] === MessageComponentTypes.SELECT_MENU
         );
     }
