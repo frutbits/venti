@@ -10,7 +10,7 @@
     "lint": "eslint . --ignore-path .gitignore --ext .ts",
     "lint:fix": "eslint . --ignore-path .gitignore --ext .ts --fix",
     "start": "node --experimental-specifier-resolution=node dist/main",
-    "start:dev": "rimraf ./dist && npm run compile && npm start",
+    "start:dev": "rimraf ./dist && npm run compile && node --experimental-specifier-resolution=node --no-warnings dist/main",
     "prisma:generate": "prisma generate",
     "prisma:pull": "prisma db pull",
     "prisma:push": "prisma db push"
