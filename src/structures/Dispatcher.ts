@@ -1,7 +1,9 @@
 import { Snowflake, VoiceState } from "discord.js";
-import { ShoukakuPlayer, ShoukakuTrack } from "shoukaku";
+import { LavalinkTrack } from "lavalink-api-types";
+import { Player, TrackEndEvent, TrackExceptionEvent } from "shoukaku";
 import { DispatcherOptions } from "../typings";
 import { EmbedPlayer } from "../utils/EmbedPlayer";
+import { Util } from "../utils/Util";
 import { Track } from "./Track";
 import { Venti } from "./Venti";
 
@@ -43,7 +45,7 @@ export class Dispatcher {
     public timeout: NodeJS.Timeout | null = null;
     public votes: string[] = [];
     public loopState: LoopType = LoopType.NONE;
-    public player!: ShoukakuPlayer | null;
+    public player!: Player | null;
     public embedPlayer: EmbedPlayer | undefined;
     private _lastMusicMessageID: Snowflake | null = null;
     private _lastExceptionMessageID: Snowflake | null = null;
@@ -58,7 +60,7 @@ export class Dispatcher {
 
     public async connect(): Promise<{ success: boolean; error?: string }> {
         if (this.player) return { success: true };
-        const response = await this.client.shoukaku.getNode().joinChannel({
+        const response = await this.client.shoukaku.getNode()!.joinChannel({
             guildId: this.guild.id,
             shardId: this.guild.shardId,
             channelId: this.voiceChannel.id,
@@ -68,11 +70,12 @@ export class Dispatcher {
         this.embedPlayer = new EmbedPlayer(this);
         await this.embedPlayer.fetch();
         this.player = response;
+        this.handleEvent(this.player);
         return { success: true };
     }
 
     public async addTracks(
-        data: { track: ShoukakuTrack; requester: string }[]
+        data: { track: LavalinkTrack; requester: string }[]
     ): Promise<{ duplicate: string[]; overload: string[]; success: string[]; queueLimit: number | null }> {
         const settings = await this.client.databases.guild.get(this.guild.id, {
             select: {
@@ -108,6 +111,50 @@ export class Dispatcher {
         Object.assign(this, { queue: [] });
         void this.embedPlayer?.update();
         this.client.shoukaku.queue.delete(this.guild.id);
+    }
+
+    public handleEvent(player: Player): void {
+        player.on("start", async () => {
+            void this.embedPlayer?.update();
+            if (!this.embedPlayer?.message) {
+                this.oldMusicMessage = await this.textChannel.send({
+                    embeds: [
+                        Util.createEmbed("info", `Started playing: \`${this.queue[0].displayTitle}\``)
+                    ]
+                }).then(x => x.id);
+            }
+        });
+        player.on("end", async (data: TrackEndEvent) => {
+            if (data.reason === "REPLACED") return;
+            this.queue.previousTrack = this.queue[0];
+            this.queue.shift();
+            if (["LOAD_FAILED", "CLEAN_UP"].includes(data.reason)) {
+                if (this.queue.length) return player.playTrack({ track: this.queue[0].base64 });
+            }
+            if (this.loopState === LoopType.ALL) this.queue.push(this.queue.previousTrack);
+            if (this.loopState === LoopType.ONE) this.queue.unshift(this.queue.previousTrack);
+            void this.embedPlayer?.update();
+            if (this.queue.length) return player.playTrack({ track: this.queue[0].base64 });
+            if (!this.embedPlayer?.message) {
+                await this.textChannel.send({
+                    embeds: [
+                        Util.createEmbed("info", "We've run out of songs! Better queue up some more tunes.")
+                            .setTitle("**Queue Concluded**")
+                    ]
+                }).then(x => x.id);
+            }
+            return this.destroy();
+        });
+        player.on("exception", async (data: TrackExceptionEvent) => {
+            this.oldExceptionMessage = await this.textChannel.send({
+                embeds: [
+                    Util.createEmbed("error", `There is an exception while trying to play this track:\n\`\`\`java\n${data.exception!.message}\`\`\``, true)
+                ]
+            }).then(x => x.id);
+            if (this.embedPlayer?.textChannel) {
+                setTimeout(() => this.oldExceptionMessage = null, 5000);
+            }
+        });
     }
 
     public get listeners(): VoiceState[] {

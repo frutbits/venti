@@ -1,4 +1,4 @@
-import { NodeOptions } from "shoukaku";
+import { NodeOption } from "shoukaku";
 
 export const devs: string[] = JSON.parse(process.env.CONFIG_DEVS ?? "[]");
 export const devGuilds = JSON.parse(process.env.CONFIG_DEV_GUILDS ?? "[]");
@@ -7,7 +7,7 @@ export const prefix = process.env.CONFIG_PREFIX!;
 export const deleteQueueTimeout = Number(process.env.CONFIG_DELETE_QUEUE_TIMEOUT!) * 1000;
 export const lavalinkRest: { host?: string; auth?: string } = JSON.parse(process.env.LAVALINK_REST ?? "{}");
 export const lavalink = {
-    servers: JSON.parse(process.env.LAVALINK_NODES ?? "[]") as NodeOptions[],
+    servers: JSON.parse(process.env.LAVALINK_NODES ?? "[]") as NodeOption[],
     options: {
         moveOnDisconnect: false,
         reconnectTries: 3,

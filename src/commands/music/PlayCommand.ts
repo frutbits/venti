@@ -72,7 +72,7 @@ export class PlayCommand extends Command {
             });
         }
         const query = argsQuery?.value ?? ctx.options?.getString("query", true);
-        const result = await ShoukakuHandler.restResolve(this.container.client.shoukaku.getNode(), query!, ShoukakuHandler.getProvider(query!));
+        const result = await ShoukakuHandler.restResolve(this.container.client.shoukaku.getNode()!, query!, ShoukakuHandler.getProvider(query!));
         if ("error" in result) {
             return ctx.send({
                 embeds: [
@@ -80,7 +80,7 @@ export class PlayCommand extends Command {
                 ]
             });
         }
-        if (result.type === "NO_MATCHES" || !result.tracks.length) {
+        if (result.loadType === "NO_MATCHES" || !result.tracks.length) {
             return ctx.send({
                 embeds: [
                     Util.createEmbed("error", "Couldn't obtain any result matching the query", true)
@@ -108,10 +108,10 @@ export class PlayCommand extends Command {
             requester: ctx.author.id
         }));
         const added = await dispatcher.addTracks(
-            result.type === "PLAYLIST" ? toAdd : [toAdd[0]]
+            result.loadType === "PLAYLIST_LOADED" ? toAdd : [toAdd[0]]
         );
         if (!dispatcher.player?.track && added.success.length) {
-            dispatcher.player?.playTrack(dispatcher.queue[0].base64);
+            dispatcher.player?.playTrack({ track: dispatcher.queue[0].base64 });
         }
         await dispatcher.embedPlayer?.update();
         const sendTrackAdded = async (): Promise<void> => {
@@ -119,9 +119,9 @@ export class PlayCommand extends Command {
                 embeds: [
                     Util.createEmbed(
                         "success",
-                        `Added ${result.type === "PLAYLIST" ? `**${result.playlistName ?? "Unknown Playlist"}** (${added.success.length} tracks)` : `\`${DiscordJSUtil.escapeMarkdown(toAdd[0].track.info.title!)}\``} to the queue`,
+                        `Added ${result.loadType === "PLAYLIST_LOADED" ? `**${result.playlistInfo.name ?? "Unknown Playlist"}** (${added.success.length} tracks)` : `\`${DiscordJSUtil.escapeMarkdown(toAdd[0].track.info.title)}\``} to the queue`,
                         true
-                    ).setThumbnail(result.type === "PLAYLIST" ? " " : new Track(toAdd[0].track, ctx.author.id).displayThumbnail)
+                    ).setThumbnail(result.loadType === "PLAYLIST_LOADED" ? " " : new Track(toAdd[0].track, ctx.author.id).displayThumbnail)
                 ]
             });
         };
@@ -131,7 +131,7 @@ export class PlayCommand extends Command {
             if (!ctx.isCommand() && requester?.channel?.id !== ctx.context.channelId) {
                 await sendTrackAdded();
             }
-            if (!ctx.isCommand() && requester?.channel?.id === ctx.context.channelId && result.type === "PLAYLIST") {
+            if (!ctx.isCommand() && requester?.channel?.id === ctx.context.channelId && result.loadType === "PLAYLIST_LOADED") {
                 await sendTrackAdded();
             }
         }
