@@ -82,8 +82,9 @@
     "discord.js": "^13.7.0",
     "dotenv": "^16.0.1",
     "got": "^12.1.0",
+    "lavalink-api-types": "^0.1.9",
     "pretty-ms": "^7.0.1",
-    "shoukaku": "^2.1.6",
+    "shoukaku": "^3.0.5",
     "tslib": "^2.4.0"
   }
 }

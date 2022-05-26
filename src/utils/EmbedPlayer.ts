@@ -36,14 +36,14 @@ export class EmbedPlayer {
         if (!this.textChannel || !this.message) return;
         if (this.message.editable && this.dispatcher.player) {
             if (this.dispatcher.queue.length) {
-                const list = Util.chunk(this.dispatcher.queue.queued.map((x, i) => `${++i}. ${x.info.author!} - ${x.displayTitle} [${x.info.isStream ? "LIVE" : Util.readableTime(x.info.length!)}] ~ <@${x.requester}>`), 10);
+                const list = Util.chunk(this.dispatcher.queue.queued.map((x, i) => `${++i}. ${x.info.author} - ${x.displayTitle} [${x.info.isStream ? "LIVE" : Util.readableTime(x.info.length)}] ~ <@${x.requester}>`), 10);
                 const currentSong = this.dispatcher.queue[0];
                 const image = currentSong.displayThumbnail
                     ? await get(currentSong.displayThumbnail).then(() => currentSong.displayThumbnail).catch(() => Images.DEFAULT_BANNER)
                     : Images.DEFAULT_BANNER;
                 const embed = Util.createEmbed("info")
-                    .setTitle(`${`**${currentSong.info.title!}`.substring(0, 254)}**`)
-                    .setURL(currentSong.info.uri!)
+                    .setTitle(`${`**${currentSong.info.title}`.substring(0, 254)}**`)
+                    .setURL(currentSong.info.uri)
                     .setDescription(`Requested by: <@${currentSong.requester}>`)
                     .setImage(image)
                     .setFooter({ text: `${this.dispatcher.queue.queueSize} songs in queue | Volume: ${this.dispatcher.player.filters.volume * 100}% ${this.dispatcher.loopState === LoopType.NONE ? "" : `| Loop: ${loopModes[this.dispatcher.loopState]}`} ${this.dispatcher.player.paused ? "| Song paused" : ""}` });

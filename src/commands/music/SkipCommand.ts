@@ -50,7 +50,7 @@ export class SkipCommand extends Command {
             if (ctx.context.member!.roles.cache.some(x => (data.dj_roles || []).includes(x.id))) {
                 if (!ctx.isInsideRequesterChannel) {
                     await ctx.send({
-                        embeds: [Util.createEmbed("success", `Skipped **[${dispatcher.queue.currentTrack!.displayTitle}](${dispatcher.queue.currentTrack!.info.uri!})**`)]
+                        embeds: [Util.createEmbed("success", `Skipped **[${dispatcher.queue.currentTrack!.displayTitle}](${dispatcher.queue.currentTrack!.info.uri})**`)]
                     });
                 }
                 return dispatcher.player?.stopTrack();

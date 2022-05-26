@@ -1,7 +1,7 @@
 import { Util } from "discord.js";
-import { ShoukakuTrack } from "shoukaku";
 import { decode } from "@lavalink/encoding";
 import DataInput from "../utils/DataInput";
+import { LavalinkTrack } from "lavalink-api-types";
 
 export class DecodeTrack {
     public title: string;
@@ -36,8 +36,8 @@ export class Track {
     public raw!: DecodeTrack | undefined;
     public base64 = this.track.track;
     public info = this.track.info;
-    public displayTitle = Util.escapeMarkdown(this.info.title!.length > 45 ? `${this.info.title!.substring(0, 45)}...` : this.info.title!);
-    public constructor(public readonly track: ShoukakuTrack, public readonly requester: string) {
+    public displayTitle = Util.escapeMarkdown(this.info.title.length > 45 ? `${this.info.title.substring(0, 45)}...` : this.info.title);
+    public constructor(public readonly track: LavalinkTrack, public readonly requester: string) {
         try {
             this.raw = new DecodeTrack(new Uint8Array(Buffer.from(this.base64, "base64")));
         } catch {
@@ -51,6 +51,6 @@ export class Track {
 
     public get displayThumbnail(): string {
         if (this.raw?.artworkUrl) return this.raw.artworkUrl;
-        return `https://i.ytimg.com/vi/${this.info.identifier!}/maxresdefault.jpg`;
+        return `https://i.ytimg.com/vi/${this.info.identifier}/maxresdefault.jpg`;
     }
 }
