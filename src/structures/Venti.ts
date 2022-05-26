@@ -1,6 +1,3 @@
-// Sapphire Plugins
-import "@sapphire/plugin-logger/register";
-
 import { SapphireClient } from "@sapphire/framework";
 import { ClientOptions } from "discord.js";
 import { ShoukakuHandler } from "./ShoukakuHandler";
