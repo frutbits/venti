@@ -84,7 +84,7 @@
     "got": "^12.1.0",
     "lavalink-api-types": "^0.1.9",
     "pino-pretty": "^7.6.1",
-    "pretty-ms": "^7.0.1",
+    "pretty-ms": "^8.0.0",
     "shoukaku": "^3.0.5",
     "tslib": "^2.4.0"
   }
