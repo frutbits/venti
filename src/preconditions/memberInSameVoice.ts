@@ -28,6 +28,7 @@ export class memberInSameVoice extends Precondition {
                 ctx.context.guild!.me.voice.channelId !== voiceChannel?.id &&
                 dispatcher.listeners.length > 0 && !voiceChannel?.joinable
             ) {
+                // eslint-disable-next-line @typescript-eslint/no-base-to-string
                 return this.error({ message: `I'm already being used in ${voiceChannel!.toString()}` });
             }
         }
