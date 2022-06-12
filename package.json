@@ -74,7 +74,7 @@
     "@frutbits/pino-logger": "^1.0.4",
     "@lavalink/encoding": "^0.1.2",
     "@prisma/client": "^3.14.0",
-    "@sapphire/decorators": "^4.3.4",
+    "@sapphire/decorators": "^4.3.5",
     "@sapphire/framework": "^3.0.0-next.fd7be0b.0",
     "@sapphire/plugin-editable-commands": "^1.2.0",
     "@sapphire/utilities": "^3.6.2",
