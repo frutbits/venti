@@ -1,4 +1,4 @@
 {
 	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
-	"extends": ["github>zhycorp/template:zhycorp-renovate"]
+	"extends": ["github>frutbits/renovate-config"]
 }

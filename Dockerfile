@@ -1,7 +1,7 @@
 FROM hazmi35/node:16-dev-alpine as build-stage
 
 LABEL name "venti (build-stage)"
-LABEL maintainer "Zen <zen@zhycorp.org>"
+LABEL maintainer "FrutBits Indonesia <contact@frutbits.org>"
 
 WORKDIR /tmp/build
 
@@ -28,7 +28,7 @@ RUN npm prune --production
 FROM hazmi35/node:16-alpine
 
 LABEL name "venti"
-LABEL maintainer "Zen <zen@zhycorp.org>"
+LABEL maintainer "FrutBits Indonesia <contact@frutbits.org>"
 
 WORKDIR /app
 

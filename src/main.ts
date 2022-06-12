@@ -1,6 +1,6 @@
 // Sapphire Plugins
 import "@sapphire/plugin-editable-commands/register";
-import "@zhycorporg/pino-logger/register";
+import "@frutbits/pino-logger/register";
 
 import { BucketScope } from "@sapphire/framework";
 import "dotenv/config";

@@ -47,7 +47,7 @@ jobs:
           flavor: |
             latest=auto
             suffix=${{ steps.flavor.outputs.name }}
-          images: ghcr.io/zhycorp/venti
+          images: ghcr.io/frutbits/venti
           tags: |
             ${{ steps.tags.outputs.name }}
             latest
