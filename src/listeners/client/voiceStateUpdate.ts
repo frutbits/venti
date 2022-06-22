@@ -18,7 +18,7 @@ export class VoiceStateUpdateEvent extends Listener {
         const oldVC = oldState.channel;
         const oldID = oldVC?.id;
         const newID = newVC?.id;
-        const queueVCId = dispatcher.player?.connection.channelId
+        const queueVCId = dispatcher.player?.connection.channelId;
         const queueVC = cast<VoiceChannel | undefined>(newState.guild.channels.cache.get(cast<string>(dispatcher.player?.connection.channelId)));
         const oldMember = oldState.member;
         const member = newState.member;
@@ -56,7 +56,7 @@ export class VoiceStateUpdateEvent extends Listener {
         if (newState.mute !== oldState.mute || newState.deaf !== oldState.deaf) return undefined; // TODO: Handle all listeners deaf & bot muted event?
 
         // Handle when the bot is moved to another voice channel
-        if (member?.id === botID && oldID === queueVC.id && newID !== queueVC.id && newID !== undefined) {
+        if (queueVCId && member?.id === botID && oldID === queueVCId && newID !== queueVCId && newID !== undefined) {
             if (!newVCMembers) return undefined;
             if (newVCMembers.size === 0 && dispatcher.timeout === null) this.doTimeout(newVCMembers, dispatcher);
             else if (newVCMembers.size !== 0 && dispatcher.timeout !== null) this.resumeTimeout(newVCMembers, dispatcher);
@@ -64,15 +64,22 @@ export class VoiceStateUpdateEvent extends Listener {
 
         // Handle when user leaves voice channel
         if (
-            oldID === queueVC.id &&
-            newID !== queueVC.id &&
+            queueVCId &&
+            queueVCMembers &&
+            oldID === queueVCId &&
+            newID !== queueVCId &&
             !member?.user.bot &&
             dispatcher.timeout === null &&
             deleteQueueTimeout !== 0
         ) this.doTimeout(queueVCMembers, dispatcher);
 
         // Handle when user joins voice channel or bot gets moved
-        if (newID === queueVC.id && !member?.user.bot && deleteQueueTimeout !== 0) this.resumeTimeout(queueVCMembers, dispatcher);
+        if (
+            newID === queueVCId &&
+            !member?.user.bot &&
+            deleteQueueTimeout !== 0 &&
+            queueVCMembers
+        ) this.resumeTimeout(queueVCMembers, dispatcher);
     }
 
     private doTimeout(vcMembers: Collection<Snowflake, GuildMember>, dispatcher: Dispatcher): any {
