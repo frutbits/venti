@@ -1,6 +1,7 @@
 import { ApplyOptions } from "@sapphire/decorators";
 import { Listener } from "@sapphire/framework";
-import { Collection, GuildMember, Message, Snowflake, VoiceState } from "discord.js";
+import { cast } from "@sapphire/utilities";
+import { Collection, GuildMember, Message, Snowflake, VoiceChannel, VoiceState } from "discord.js";
 import { deleteQueueTimeout } from "../../config";
 import { Dispatcher } from "../../structures/Dispatcher";
 import { Util } from "../../utils/Util";
@@ -17,15 +18,16 @@ export class VoiceStateUpdateEvent extends Listener {
         const oldVC = oldState.channel;
         const oldID = oldVC?.id;
         const newID = newVC?.id;
-        const queueVC = dispatcher.voiceChannel;
+        const queueVCId = dispatcher.player?.connection.channelId
+        const queueVC = cast<VoiceChannel | undefined>(newState.guild.channels.cache.get(cast<string>(dispatcher.player?.connection.channelId)));
         const oldMember = oldState.member;
         const member = newState.member;
-        const queueVCMembers = queueVC.members.filter(m => !m.user.bot);
+        const queueVCMembers = queueVC?.members.filter(m => !m.user.bot);
         const newVCMembers = newVC?.members.filter(m => !m.user.bot);
         const botID = this.container.client.user!.id; // TODO: Handle bot moved & kicked from voice channel in VoiceConnection directly?
 
         // Handle when bot gets kicked from the voice channel
-        if (oldMember?.id === botID && oldID === queueVC.id && newID === undefined) {
+        if (queueVCId && oldMember?.id === botID && oldID === queueVCId && newID === undefined) {
             try {
                 dispatcher.player?.setPaused(true);
                 clearTimeout(dispatcher.timeout!);
