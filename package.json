@@ -63,7 +63,7 @@
     "@sapphire/decorators": "^4.3.6",
     "@sapphire/framework": "^3.0.0-next.fd7be0b.0",
     "@sapphire/plugin-editable-commands": "^1.2.0",
-    "@sapphire/utilities": "^3.6.2",
+    "@sapphire/utilities": "^3.7.0",
     "discord-api-types": "^0.36.0",
     "discord.js": "^13.8.1",
     "dotenv": "^16.0.1",
