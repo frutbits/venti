@@ -65,7 +65,7 @@
     "@sapphire/plugin-editable-commands": "^1.2.2",
     "@sapphire/utilities": "^3.7.0",
     "discord-api-types": "^0.36.1",
-    "discord.js": "^13.8.1",
+    "discord.js": "^14.1.2",
     "dotenv": "^16.0.1",
     "got": "^12.1.0",
     "lavalink-api-types": "^0.1.9",
